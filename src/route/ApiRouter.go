@@ -68,7 +68,7 @@ func ApiRouter(router *gin.Engine) {
 	)
 	
 	router.PUT(
-		"/api/v1/categories/:id",
+		"/api/v1/categories",
 		middleware.RequireJWT(),
 		middleware.RequirePermission(model.CreateUser),
 		categoryController.UpdateCategory,

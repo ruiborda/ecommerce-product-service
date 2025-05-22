@@ -27,7 +27,7 @@ func NewCategoryServiceImpl() service.CategoryService {
 }
 
 // CreateCategory implementa la creación de una nueva categoría
-func (s *CategoryServiceImpl) CreateCategory(createRequest *product.CreateCategoryRequest, authorId string) (*product.CreateCategoryResponse, error) {
+func (s *CategoryServiceImpl) CreateCategory(createRequest *product.CreateCategoryRequest) (*product.CreateCategoryResponse, error) {
 	// Validar datos de entrada
 	if createRequest == nil {
 		return nil, errors.New("request cannot be nil")
@@ -56,10 +56,14 @@ func (s *CategoryServiceImpl) CreateCategory(createRequest *product.CreateCatego
 }
 
 // UpdateCategory implementa la actualización de una categoría existente
-func (s *CategoryServiceImpl) UpdateCategory(id string, updateRequest *product.UpdateCategoryRequest) (*product.UpdateCategoryResponse, error) {
+func (s *CategoryServiceImpl) UpdateCategory(updateRequest *product.UpdateCategoryRequest) (*product.UpdateCategoryResponse, error) {
 	// Validar datos de entrada
 	if updateRequest == nil {
 		return nil, errors.New("request cannot be nil")
+	}
+	
+	if updateRequest.Id == "" {
+		return nil, errors.New("category id is required")
 	}
 	
 	if updateRequest.Name == "" {
@@ -67,9 +71,9 @@ func (s *CategoryServiceImpl) UpdateCategory(id string, updateRequest *product.U
 	}
 	
 	// Verificar si la categoría existe
-	existingCategory, err := s.categoryRepository.GetCategoryById(id)
+	existingCategory, err := s.categoryRepository.GetCategoryById(updateRequest.Id)
 	if err != nil {
-		slog.Error("Error fetching category for update", "id", id, "error", err)
+		slog.Error("Error fetching category for update", "id", updateRequest.Id, "error", err)
 		return nil, err
 	}
 	
@@ -77,13 +81,13 @@ func (s *CategoryServiceImpl) UpdateCategory(id string, updateRequest *product.U
 		return nil, errors.New("category not found")
 	}
 	
-	// Actualizar el modelo de categoría usando el mapper
-	categoryModel := s.categoryMapper.UpdateRequestToCategory(id, updateRequest)
+	// Actualizar sólo los campos proporcionados en la solicitud
+	existingCategory.Name = updateRequest.Name
 	
 	// Guardar la categoría actualizada en la base de datos
-	updatedCategory, err := s.categoryRepository.UpdateCategory(categoryModel)
+	updatedCategory, err := s.categoryRepository.UpdateCategory(existingCategory)
 	if err != nil {
-		slog.Error("Error updating category", "id", id, "error", err)
+		slog.Error("Error updating category", "id", updateRequest.Id, "error", err)
 		return nil, err
 	}
 	

@@ -7,11 +7,9 @@ import (
 	"github.com/ruiborda/ecommerce-product-service/src/dto/product"
 	"github.com/ruiborda/ecommerce-product-service/src/service"
 	"github.com/ruiborda/ecommerce-product-service/src/service/impl"
-	"github.com/ruiborda/go-jwt/src/domain/entity"
 	"github.com/ruiborda/go-swagger-generator/src/openapi"
 	"github.com/ruiborda/go-swagger-generator/src/openapi_spec/mime"
 	"github.com/ruiborda/go-swagger-generator/src/swagger"
-	"github.com/ruiborda/ecommerce-product-service/src/dto/auth"
 )
 
 type CategoryController struct {
@@ -47,32 +45,8 @@ func (cc *CategoryController) CreateCategory(c *gin.Context) {
 		return
 	}
 
-	// Extraer el ID del autor del token JWT
-	claimsValue, exists := c.Get("jwtClaims")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "No JWT claims found"})
-		return
-	}
-
-	// Obtener el ID del usuario (autor) desde el JWT
-	var authorId string
-
-	claims, ok := claimsValue.(*entity.JWTClaims[*auth.JwtPrivateClaims])
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid JWT claims format"})
-		return
-	}
-
-	// Obtener el subject (ID de usuario) desde los claims registrados
-	authorId = claims.RegisteredClaims.Subject
-
-	if authorId == "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "User ID not found in token"})
-		return
-	}
-
-	// Llamar al servicio pasando tanto el DTO como el authorId extraído del JWT
-	response, err := cc.categoryService.CreateCategory(createCategoryRequest, authorId)
+	// Llamar al servicio para crear la categoría
+	response, err := cc.categoryService.CreateCategory(createCategoryRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -81,18 +55,13 @@ func (cc *CategoryController) CreateCategory(c *gin.Context) {
 	c.JSON(http.StatusCreated, response)
 }
 
-var _ = swagger.Swagger().Path("/api/v1/categories/{id}").
+var _ = swagger.Swagger().Path("/api/v1/categories").
 	Put(func(operation openapi.Operation) {
 		operation.Summary("Update an existing category").
 			OperationID("UpdateCategory").
 			Tag("CategoryController").
 			Consume(mime.ApplicationJSON).
 			Produces(mime.ApplicationJSON).
-			PathParameter("id", func(param openapi.Parameter) {
-				param.Description("ID of the category to update").
-					Required(true).
-					Type("string")
-			}).
 			BodyParameter(func(param openapi.Parameter) {
 				param.Description("Category object with updated values").
 					Required(true).
@@ -102,7 +71,6 @@ var _ = swagger.Swagger().Path("/api/v1/categories/{id}").
 	}).Doc()
 
 func (cc *CategoryController) UpdateCategory(c *gin.Context) {
-	id := c.Param("id")
 	var updateCategoryRequest = &product.UpdateCategoryRequest{}
 
 	if err := c.BindJSON(updateCategoryRequest); err != nil {
@@ -111,7 +79,7 @@ func (cc *CategoryController) UpdateCategory(c *gin.Context) {
 	}
 
 	// Llamar al servicio para actualizar la categoría
-	response, err := cc.categoryService.UpdateCategory(id, updateCategoryRequest)
+	response, err := cc.categoryService.UpdateCategory(updateCategoryRequest)
 	if err != nil {
 		if err.Error() == "category not found" {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

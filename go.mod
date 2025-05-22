@@ -1,6 +1,6 @@
 module github.com/ruiborda/ecommerce-product-service
 
-go 1.24.2
+go 1.24
 
 require (
 	cloud.google.com/go/firestore v1.18.0
