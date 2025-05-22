@@ -16,10 +16,10 @@ func (cm *CategoryMapper) CreateRequestToCategory(request *category.CreateCatego
 }
 
 // CategoryToCreateResponse convierte un modelo de categoría a un DTO de respuesta de creación
-func (cm *CategoryMapper) CategoryToCreateResponse(category *model.Category) *category.CreateCategoryResponse {
+func (cm *CategoryMapper) CategoryToCreateResponse(cat *model.Category) *category.CreateCategoryResponse {
 	return &category.CreateCategoryResponse{
-		Id:   category.Id,
-		Name: category.Name,
+		Id:   cat.Id,
+		Name: cat.Name,
 	}
 }
 
@@ -32,10 +32,10 @@ func (cm *CategoryMapper) UpdateRequestToCategory(request *category.UpdateCatego
 }
 
 // CategoryToUpdateResponse convierte un modelo de categoría a un DTO de respuesta de actualización
-func (cm *CategoryMapper) CategoryToUpdateResponse(category *model.Category) *category.UpdateCategoryResponse {
+func (cm *CategoryMapper) CategoryToUpdateResponse(cat *model.Category) *category.UpdateCategoryResponse {
 	return &category.UpdateCategoryResponse{
-		Id:   category.Id,
-		Name: category.Name,
+		Id:   cat.Id,
+		Name: cat.Name,
 	}
 }
 
