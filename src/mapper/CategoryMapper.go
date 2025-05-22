@@ -2,7 +2,6 @@ package mapper
 
 import (
 	"github.com/ruiborda/ecommerce-product-service/src/dto/category"
-	"github.com/ruiborda/ecommerce-product-service/src/dto/product"
 	"github.com/ruiborda/ecommerce-product-service/src/model"
 )
 
@@ -17,8 +16,8 @@ func (cm *CategoryMapper) CreateRequestToCategory(request *category.CreateCatego
 }
 
 // CategoryToCreateResponse convierte un modelo de categoría a un DTO de respuesta de creación
-func (cm *CategoryMapper) CategoryToCreateResponse(category *model.Category) *product.CreateCategoryResponse {
-	return &product.CreateCategoryResponse{
+func (cm *CategoryMapper) CategoryToCreateResponse(category *model.Category) *category.CreateCategoryResponse {
+	return &category.CreateCategoryResponse{
 		Id:   category.Id,
 		Name: category.Name,
 	}
@@ -33,8 +32,8 @@ func (cm *CategoryMapper) UpdateRequestToCategory(request *category.UpdateCatego
 }
 
 // CategoryToUpdateResponse convierte un modelo de categoría a un DTO de respuesta de actualización
-func (cm *CategoryMapper) CategoryToUpdateResponse(category *model.Category) *product.UpdateCategoryResponse {
-	return &product.UpdateCategoryResponse{
+func (cm *CategoryMapper) CategoryToUpdateResponse(category *model.Category) *category.UpdateCategoryResponse {
+	return &category.UpdateCategoryResponse{
 		Id:   category.Id,
 		Name: category.Name,
 	}
@@ -43,7 +42,7 @@ func (cm *CategoryMapper) CategoryToUpdateResponse(category *model.Category) *pr
 // CategoriesToDTOArray convierte una lista de modelos de categoría a un array de DTOs
 func (cm *CategoryMapper) CategoriesToDTOArray(categories []*model.Category) *[]*category.GetCategoriesResponse {
 	responses := make([]*category.GetCategoriesResponse, 0, len(categories))
-	
+
 	for _, categoryModel := range categories {
 		response := &category.GetCategoriesResponse{
 			Id:   categoryModel.Id,
@@ -51,6 +50,6 @@ func (cm *CategoryMapper) CategoriesToDTOArray(categories []*model.Category) *[]
 		}
 		responses = append(responses, response)
 	}
-	
+
 	return &responses
 }

@@ -6,7 +6,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/ruiborda/ecommerce-product-service/src/dto/category"
-	"github.com/ruiborda/ecommerce-product-service/src/dto/product"
 	"github.com/ruiborda/ecommerce-product-service/src/mapper"
 	"github.com/ruiborda/ecommerce-product-service/src/repository"
 	repoImpl "github.com/ruiborda/ecommerce-product-service/src/repository/impl"
@@ -28,7 +27,7 @@ func NewCategoryServiceImpl() service.CategoryService {
 }
 
 // CreateCategory implementa la creación de una nueva categoría
-func (s *CategoryServiceImpl) CreateCategory(createRequest *category.CreateCategoryRequest) (*product.CreateCategoryResponse, error) {
+func (s *CategoryServiceImpl) CreateCategory(createRequest *category.CreateCategoryRequest) (*category.CreateCategoryResponse, error) {
 	// Validar datos de entrada
 	if createRequest == nil {
 		return nil, errors.New("request cannot be nil")
@@ -57,7 +56,7 @@ func (s *CategoryServiceImpl) CreateCategory(createRequest *category.CreateCateg
 }
 
 // UpdateCategory implementa la actualización de una categoría existente
-func (s *CategoryServiceImpl) UpdateCategory(updateRequest *category.UpdateCategoryRequest) (*product.UpdateCategoryResponse, error) {
+func (s *CategoryServiceImpl) UpdateCategory(updateRequest *category.UpdateCategoryRequest) (*category.UpdateCategoryResponse, error) {
 	// Validar datos de entrada
 	if updateRequest == nil {
 		return nil, errors.New("request cannot be nil")
@@ -95,10 +94,6 @@ func (s *CategoryServiceImpl) UpdateCategory(updateRequest *category.UpdateCateg
 	// Crear la respuesta usando el mapper
 	return s.categoryMapper.CategoryToUpdateResponse(updatedCategory), nil
 }
-
-// GetCategories implementa la obtención de todas las categorías
-// Esta función ya no es necesaria y puede ser eliminada
-// GetCategories() (*category.GetCategoriesResponse, error)
 
 // GetAllCategoriesAsArray implementa la obtención de todas las categorías como un array
 func (s *CategoryServiceImpl) GetAllCategoriesAsArray() *[]*category.GetCategoriesResponse {
