@@ -1,4 +1,4 @@
-package product
+package category
 
 // CreateCategoryRequest DTO para la creación de una categoría
 type CreateCategoryRequest struct {

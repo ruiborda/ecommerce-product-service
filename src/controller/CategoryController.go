@@ -3,8 +3,9 @@ package controller
 import (
 	"net/http"
 
+	"github.com/ruiborda/ecommerce-product-service/src/dto/category"
+
 	"github.com/gin-gonic/gin"
-	"github.com/ruiborda/ecommerce-product-service/src/dto/product"
 	"github.com/ruiborda/ecommerce-product-service/src/service"
 	"github.com/ruiborda/ecommerce-product-service/src/service/impl"
 	"github.com/ruiborda/go-swagger-generator/src/openapi"
@@ -32,13 +33,13 @@ var _ = swagger.Swagger().Path("/api/v1/categories").
 			BodyParameter(func(param openapi.Parameter) {
 				param.Description("Category object that needs to be added to the system").
 					Required(true).
-					SchemaFromDTO(&product.CreateCategoryRequest{})
+					SchemaFromDTO(&category.CreateCategoryRequest{})
 			}).
 			Security("BearerAuth")
 	}).Doc()
 
 func (cc *CategoryController) CreateCategory(c *gin.Context) {
-	var createCategoryRequest = &product.CreateCategoryRequest{}
+	var createCategoryRequest = &category.CreateCategoryRequest{}
 
 	if err := c.BindJSON(createCategoryRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -65,13 +66,13 @@ var _ = swagger.Swagger().Path("/api/v1/categories").
 			BodyParameter(func(param openapi.Parameter) {
 				param.Description("Category object with updated values").
 					Required(true).
-					SchemaFromDTO(&product.UpdateCategoryRequest{})
+					SchemaFromDTO(&category.UpdateCategoryRequest{})
 			}).
 			Security("BearerAuth")
 	}).Doc()
 
 func (cc *CategoryController) UpdateCategory(c *gin.Context) {
-	var updateCategoryRequest = &product.UpdateCategoryRequest{}
+	var updateCategoryRequest = &category.UpdateCategoryRequest{}
 
 	if err := c.BindJSON(updateCategoryRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -95,23 +96,19 @@ func (cc *CategoryController) UpdateCategory(c *gin.Context) {
 var _ = swagger.Swagger().Path("/api/v1/categories").
 	Get(func(operation openapi.Operation) {
 		operation.Summary("Get all categories").
-			OperationID("GetCategories").
+			OperationID("GetAllCategories").
 			Tag("CategoryController").
 			Produces(mime.ApplicationJSON).
-			Response(200, func(response openapi.Response) {
-				response.Description("Successful operation").
-					SchemaFromDTO(&product.GetCategoriesResponse{})
+			Response(http.StatusOK, func(response openapi.Response) {
+				response.Description("List of all categories").
+					SchemaFromDTO(&[]*category.GetCategoriesResponse{})
 			}).
 			Security("BearerAuth")
 	}).Doc()
 
 func (cc *CategoryController) GetCategories(c *gin.Context) {
-	// Llamar al servicio para obtener todas las categorías
-	response, err := cc.categoryService.GetCategories()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, response)
+	// Usar el método que devuelve un puntero a un array
+	response := cc.categoryService.GetAllCategoriesAsArray()
+	// Desreferenciar el puntero para obtener el array
+	c.JSON(http.StatusOK, *response)
 }

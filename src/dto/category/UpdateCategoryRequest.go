@@ -1,4 +1,4 @@
-package product
+package category
 
 // UpdateCategoryRequest DTO para la actualización de una categoría
 type UpdateCategoryRequest struct {

@@ -66,14 +66,14 @@ func ApiRouter(router *gin.Engine) {
 		middleware.RequirePermission(model.CreateUser),
 		categoryController.CreateCategory,
 	)
-	
+
 	router.PUT(
 		"/api/v1/categories",
 		middleware.RequireJWT(),
 		middleware.RequirePermission(model.CreateUser),
 		categoryController.UpdateCategory,
 	)
-	
+
 	router.GET(
 		"/api/v1/categories",
 		middleware.RequireJWT(),

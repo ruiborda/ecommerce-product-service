@@ -1,6 +1,7 @@
 package mapper
 
 import (
+	"github.com/ruiborda/ecommerce-product-service/src/dto/category"
 	"github.com/ruiborda/ecommerce-product-service/src/dto/product"
 	"github.com/ruiborda/ecommerce-product-service/src/model"
 )
@@ -9,7 +10,7 @@ import (
 type CategoryMapper struct{}
 
 // CreateRequestToCategory convierte un DTO de solicitud de creación a un modelo de categoría
-func (cm *CategoryMapper) CreateRequestToCategory(request *product.CreateCategoryRequest) *model.Category {
+func (cm *CategoryMapper) CreateRequestToCategory(request *category.CreateCategoryRequest) *model.Category {
 	return &model.Category{
 		Name: request.Name,
 	}
@@ -24,9 +25,9 @@ func (cm *CategoryMapper) CategoryToCreateResponse(category *model.Category) *pr
 }
 
 // UpdateRequestToCategory convierte un DTO de solicitud de actualización a un modelo de categoría
-func (cm *CategoryMapper) UpdateRequestToCategory(id string, request *product.UpdateCategoryRequest) *model.Category {
+func (cm *CategoryMapper) UpdateRequestToCategory(request *category.UpdateCategoryRequest) *model.Category {
 	return &model.Category{
-		Id:   id,
+		Id:   request.Id,
 		Name: request.Name,
 	}
 }
@@ -39,18 +40,17 @@ func (cm *CategoryMapper) CategoryToUpdateResponse(category *model.Category) *pr
 	}
 }
 
-// CategoriesToGetCategoriesResponse convierte una lista de modelos de categoría a un DTO de respuesta
-func (cm *CategoryMapper) CategoriesToGetCategoriesResponse(categories []*model.Category) *product.GetCategoriesResponse {
-	response := &product.GetCategoriesResponse{
-		Categories: make([]product.CategoryDTO, 0, len(categories)),
+// CategoriesToDTOArray convierte una lista de modelos de categoría a un array de DTOs
+func (cm *CategoryMapper) CategoriesToDTOArray(categories []*model.Category) *[]*category.GetCategoriesResponse {
+	responses := make([]*category.GetCategoriesResponse, 0, len(categories))
+	
+	for _, categoryModel := range categories {
+		response := &category.GetCategoriesResponse{
+			Id:   categoryModel.Id,
+			Name: categoryModel.Name,
+		}
+		responses = append(responses, response)
 	}
-
-	for _, category := range categories {
-		response.Categories = append(response.Categories, product.CategoryDTO{
-			Id:   category.Id,
-			Name: category.Name,
-		})
-	}
-
-	return response
+	
+	return &responses
 }
